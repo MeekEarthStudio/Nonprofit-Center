@@ -396,8 +396,32 @@ button{ font-family: inherit; cursor:pointer; }
 :focus-visible{ outline: 3px solid rgba(67,160,71,.5); outline-offset:2px; border-radius:6px; }
 
 @media print{
+  /* Ask browsers to keep colors; still readable if they don't (see below). */
+  *{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .topbar,.nav,.result-actions,#gate{ display:none !important; }
   body{ background:#fff; }
   .slide{ display:block !important; }
   .slide:not(#slide-result){ display:none !important; }
+  .stage{ padding:0 !important; }
+  .result-card{ box-shadow:none !important; border:1px solid var(--border-strong) !important; }
+
+  /* The hero is white text on a gradient on screen. Printers default to
+     "Background graphics: off", which would drop the gradient and leave the
+     score/rating invisible. Re-style it as dark ink on white so it prints
+     regardless of that setting. */
+  .result-hero,
+  .result-hero.lead,
+  .result-hero.build,
+  .result-hero.upside{
+    background:#fff !important; color:var(--green-800) !important;
+    border-bottom:2px solid var(--green-600); padding:24px 30px 18px;
+  }
+  .result-hero .rk{ color:var(--ink-3) !important; opacity:1 !important; }
+  .result-hero .rt{ color:var(--green-800) !important; }
+  /* SVG strokes are foreground and print without background graphics. */
+  .ring svg circle{ stroke:#dbe8cf !important; }
+  .ring svg #ringArc{ stroke:var(--green-600) !important; }
+  .ring .center b, .ring .center span{ color:var(--green-800) !important; }
+  /* Give the score pips outlines so they read even if fills don't print. */
+  .bd-pip{ border:1px solid var(--border-strong); }
 }
