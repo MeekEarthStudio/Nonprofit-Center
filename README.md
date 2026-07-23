@@ -10,6 +10,8 @@ plus one serverless function at `api/capture.js`. No build step, no framework, n
 dependencies. Open `index.html` in any browser to preview; deploy the folder to
 Vercel (zero-config) to activate email capture.
 
+**Live:** https://nonprofit-transparency-scorecard.vercel.app/
+
 ## Files
 
 | Path | Purpose |
