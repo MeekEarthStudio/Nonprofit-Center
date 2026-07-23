@@ -745,12 +745,20 @@ const fmt = n => n.toLocaleString("en-US");
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 function validEmail(v){ return emailRe.test(v.trim()) && !/\.\./.test(v) && v.trim().length<=254; }
 
-$("#gateForm").addEventListener("submit", e=>{
+$("#gateForm").addEventListener("submit", async e=>{
   e.preventDefault();
-  const inp = $("#email"), msg = $("#gateMsg"), v = inp.value.trim();
+  const inp = $("#email"), msg = $("#gateMsg"), btn = $("#gateBtn"), v = inp.value.trim();
+  const fail = t=>{ msg.className="gate-msg err"; msg.textContent=t; inp.classList.add("invalid"); inp.focus(); btn.disabled=false; };
   if(!v){ fail("Please enter your email address to continue."); return; }
   if(!validEmail(v)){ fail("That doesn't look like a valid email — check for typos."); return; }
-  msg.className="gate-msg ok"; msg.textContent="Verified. Opening the experience…"; inp.classList.remove("invalid");
+  inp.classList.remove("invalid");
+  btn.disabled = true;
+  msg.className="gate-msg"; msg.textContent="Verifying…";
+  // Attempt server-side capture; the content isn't sensitive, so a capture
+  // outage (or local file:// preview with no API) degrades gracefully — the
+  // visitor still gets in, the email just isn't persisted that time.
+  await captureEmail(v);
+  msg.className="gate-msg ok"; msg.textContent="Verified. Opening the experience…";
   $("#whoEmail").textContent = v;
   $("#resPreparedFor").textContent = "Prepared for " + v;
   setTimeout(()=>{
@@ -758,9 +766,30 @@ $("#gateForm").addEventListener("submit", e=>{
     $("#app").classList.add("show");
     window.scrollTo(0,0);
     initApp();
-  }, 480);
-  function fail(t){ msg.className="gate-msg err"; msg.textContent=t; inp.classList.add("invalid"); inp.focus(); }
+  }, 420);
 });
+
+async function captureEmail(email){
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), 6000);
+  try{
+    const r = await fetch("/api/capture", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ email, source:"transparency-scorecard" }),
+      signal: ctrl.signal
+    });
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok) console.warn("capture: server responded", r.status, data);
+    else if(data && data.stored===false) console.info("capture: accepted but not persisted —", data.note||"backend unconfigured");
+    return data;
+  }catch(err){
+    console.info("capture: skipped (endpoint unreachable / preview mode)", err && err.name);
+    return null;
+  }finally{
+    clearTimeout(timer);
+  }
+}
 $("#email").addEventListener("input", ()=>{
   const inp=$("#email"), msg=$("#gateMsg");
   if(inp.classList.contains("invalid") && validEmail(inp.value.trim())){ inp.classList.remove("invalid"); msg.textContent=""; msg.className="gate-msg"; }
