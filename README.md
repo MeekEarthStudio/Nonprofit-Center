@@ -24,13 +24,25 @@ Vercel (zero-config) to activate email capture.
 ## Email capture
 
 On submit, the gateway POSTs the address to `/api/capture`. That function validates
-server-side and forwards to HubSpot's public Forms API when these (non-secret)
-environment variables are set in the Vercel project:
+server-side and fans out to whichever destinations are configured via environment
+variables in the Vercel project (Settings → Environment Variables). Any subset can
+be enabled at once; the email counts as stored if at least one succeeds.
+
+**Google Sheet (via an Apps Script web app):**
+
+- `SHEETS_WEBHOOK_URL` — the Apps Script `/exec` URL
+- `SHEETS_WEBHOOK_TOKEN` — optional shared secret (must match the script)
+
+Setup: open `google-apps-script.gs`, follow its header instructions to paste the
+script into the target sheet, deploy it as a web app, then set the two variables
+above and redeploy. Rows land as `Timestamp | Email | Source`.
+
+**HubSpot (via its public Forms API — non-secret IDs):**
 
 - `HUBSPOT_PORTAL_ID`
 - `HUBSPOT_FORM_GUID`
 
-With neither set, the function still accepts the request (so the experience works
+With none set, the function still accepts the request (so the experience works
 immediately after deploy) and reports `stored:false`. The gateway degrades
 gracefully: a capture outage — or opening `index.html` directly over `file://` —
 still lets the visitor through to the content. The gate is lead capture, not
