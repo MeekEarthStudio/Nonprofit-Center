@@ -48,6 +48,20 @@ gracefully: a capture outage — or opening `index.html` directly over `file://`
 still lets the visitor through to the content. The gate is lead capture, not
 authentication.
 
+## Spam protection (rate limiting)
+
+`/api/capture` enforces a durable per-IP rate limit (5 requests / 60s, sliding
+window) backed by Upstash Redis. It activates only when these env vars are set —
+create a free Upstash Redis database and add them to the Vercel project:
+
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+
+Over the limit returns `429` with a `Retry-After` header; the gateway shows a
+"please wait a moment" message and doesn't open the app. If the vars are unset —
+or Redis is ever unreachable — the limiter **fails open** (allows the request) so
+a store outage never blocks a real signup.
+
 ## Flow
 
 1. **Email gateway** — a valid email address is required to enter. Validation is

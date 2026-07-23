@@ -16,8 +16,48 @@
 //
 // With none set, the function still accepts the request (so the experience works
 // immediately) but reports stored:false and logs a warning.
+//
+// Spam protection (durable per-IP rate limiting via Upstash Redis) activates only
+// when these are set — create a free Upstash Redis database and add:
+//     UPSTASH_REDIS_REST_URL
+//     UPSTASH_REDIS_REST_TOKEN
+// Unconfigured, or if Redis is unreachable, the function fails open (allows the
+// request) so a store outage never blocks a real signup.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+// Requests allowed per IP within the window before a 429 is returned.
+const RATE_LIMIT = 5;
+const RATE_WINDOW = "60 s";
+
+// Lazily build the limiter once per warm instance; only when configured.
+let ratelimitPromise;
+function getRatelimit() {
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    return null; // not configured — rate limiting disabled
+  }
+  if (!ratelimitPromise) {
+    ratelimitPromise = (async () => {
+      const [{ Ratelimit }, { Redis }] = await Promise.all([
+        import("@upstash/ratelimit"),
+        import("@upstash/redis"),
+      ]);
+      return new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(RATE_LIMIT, RATE_WINDOW),
+        prefix: "scorecard-capture",
+        analytics: false,
+      });
+    })();
+  }
+  return ratelimitPromise;
+}
+
+function clientIp(req) {
+  const xff = req.headers["x-forwarded-for"];
+  if (typeof xff === "string" && xff.length) return xff.split(",")[0].trim();
+  return req.headers["x-real-ip"] || "unknown";
+}
 
 function isValidEmail(email) {
   return (
@@ -94,6 +134,27 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ ok: false, error: "Method not allowed" });
+  }
+
+  // Per-IP rate limit (fail open if the store is unreachable so real signups
+  // are never blocked by a Redis outage).
+  const rl = getRatelimit();
+  if (rl) {
+    try {
+      const limiter = await rl;
+      const { success, limit, remaining, reset } = await limiter.limit(clientIp(req));
+      res.setHeader("X-RateLimit-Limit", String(limit));
+      res.setHeader("X-RateLimit-Remaining", String(Math.max(0, remaining)));
+      if (!success) {
+        const retry = Math.max(1, Math.ceil((reset - Date.now()) / 1000));
+        res.setHeader("Retry-After", String(retry));
+        return res
+          .status(429)
+          .json({ ok: false, error: "Too many requests. Please wait a moment and try again." });
+      }
+    } catch (err) {
+      console.error("capture: rate limiter unavailable, allowing request", err && err.name);
+    }
   }
 
   // req.body may arrive parsed or as a raw string depending on content-type.

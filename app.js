@@ -77,7 +77,13 @@ $("#gateForm").addEventListener("submit", async e=>{
   // Attempt server-side capture; the content isn't sensitive, so a capture
   // outage (or local file:// preview with no API) degrades gracefully — the
   // visitor still gets in, the email just isn't persisted that time.
-  await captureEmail(v);
+  const result = await captureEmail(v);
+  if(result && result.status===429){
+    msg.className="gate-msg err";
+    msg.textContent="You're going a little fast — please wait a moment and try again.";
+    btn.disabled=false;
+    return;
+  }
   msg.className="gate-msg ok"; msg.textContent="Verified. Opening the experience…";
   $("#whoEmail").textContent = v;
   $("#resPreparedFor").textContent = "Prepared for " + v;
@@ -100,9 +106,10 @@ async function captureEmail(email){
       signal: ctrl.signal
     });
     const data = await r.json().catch(()=>({}));
-    if(!r.ok) console.warn("capture: server responded", r.status, data);
+    if(r.status===429) console.warn("capture: rate limited");
+    else if(!r.ok) console.warn("capture: server responded", r.status, data);
     else if(data && data.stored===false) console.info("capture: accepted but not persisted —", data.note||"backend unconfigured");
-    return data;
+    return { status: r.status, data };
   }catch(err){
     console.info("capture: skipped (endpoint unreachable / preview mode)", err && err.name);
     return null;
