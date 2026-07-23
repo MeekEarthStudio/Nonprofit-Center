@@ -62,8 +62,9 @@ const fmt = n => n.toLocaleString("en-US");
 /* ============================================================
    GATEWAY
    ============================================================ */
-const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-function validEmail(v){ return emailRe.test(v.trim()) && !/\.\./.test(v) && v.trim().length<=254; }
+// Kept in sync with the server-side rule in api/capture.js.
+const emailRe = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,24}$/;
+function validEmail(v){ const s=v.trim(); return s.length>=6 && s.length<=254 && emailRe.test(s); }
 
 $("#gateForm").addEventListener("submit", async e=>{
   e.preventDefault();
@@ -99,10 +100,11 @@ async function captureEmail(email){
   const ctrl = new AbortController();
   const timer = setTimeout(()=>ctrl.abort(), 6000);
   try{
+    const hp = ($("#company_website") && $("#company_website").value) || "";
     const r = await fetch("/api/capture", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ email, source:"transparency-scorecard" }),
+      body: JSON.stringify({ email, source:"scorecard-gate", company_website: hp }),
       signal: ctrl.signal
     });
     const data = await r.json().catch(()=>({}));

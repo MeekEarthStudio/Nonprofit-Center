@@ -38,7 +38,7 @@ function doPost(e) {
     }
 
     var email = String(data.email || "").trim().toLowerCase();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,24}$/.test(email)) {
       return json({ ok: false, error: "invalid email" });
     }
 
@@ -48,10 +48,12 @@ function doPost(e) {
       sheet.appendRow(["Timestamp", "Email", "Source"]);
     }
 
+    // Defense-in-depth against CSV/formula injection: prefix a quote so a value
+    // beginning with = + - @ is stored as literal text, never evaluated.
     sheet.appendRow([
-      data.timestamp || new Date().toISOString(),
-      email,
-      data.source || "transparency-scorecard",
+      safe(data.timestamp || new Date().toISOString()),
+      safe(email),
+      safe(data.source || "scorecard-gate"),
     ]);
 
     return json({ ok: true, stored: true });
@@ -63,6 +65,13 @@ function doPost(e) {
 // A simple GET so you can confirm the deployment is reachable in a browser.
 function doGet() {
   return json({ ok: true, service: "scorecard-capture" });
+}
+
+// Prefix a single quote so Sheets/Excel treat a value beginning with = + - @
+// (or a control char) as literal text rather than a formula.
+function safe(value) {
+  var s = String(value == null ? "" : value).replace(/[\r\n]+/g, " ").trim().slice(0, 320);
+  return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
 }
 
 function json(obj) {

@@ -50,9 +50,14 @@ authentication.
 
 ## Spam protection (rate limiting)
 
-`/api/capture` enforces a durable per-IP rate limit (5 requests / 60s, sliding
-window) backed by Upstash Redis. It activates only when these env vars are set —
-create a free Upstash Redis database and add them to the Vercel project:
+`/api/capture` enforces durable, two-tier per-IP rate limits backed by Upstash
+Redis: a **generous primary limit** (30 requests / 10 min, sliding window) sized
+so a NATed office or conference network isn't locked out, plus a **stricter
+failure-keyed limit** (10 bad/suspicious requests — invalid emails, honeypot
+hits, rejected origins — / 10 min) since abuse is characterised by failures. The
+limiter runs before any Sheet/HubSpot write, so throttled requests cost no
+third-party quota. It activates only when these env vars are set — create a free
+Upstash Redis database and add them to the Vercel project:
 
 - `UPSTASH_REDIS_REST_URL`
 - `UPSTASH_REDIS_REST_TOKEN`

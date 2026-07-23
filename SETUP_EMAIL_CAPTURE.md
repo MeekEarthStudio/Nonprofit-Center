@@ -85,9 +85,11 @@ If the row appears, capture is live. If not, see Troubleshooting.
 
 # Part B — Rate limiting → Upstash Redis
 
-This caps `/api/capture` at **5 requests per 60 seconds per IP**, so nobody can
-script the endpoint to flood your sheet or burn function invocations. Over the
-limit, the visitor gets a "please wait a moment" message instead of getting in.
+This caps `/api/capture` per IP so nobody can script the endpoint to flood your
+sheet or burn function invocations — a generous primary limit (**30 requests /
+10 min**, sized so a shared office/conference network isn't locked out) plus a
+stricter limit on bad/suspicious requests (**10 / 10 min**). Over the limit, the
+visitor gets a "please wait a moment" message instead of getting in.
 
 Nothing to install — the code already ships with the limiter; it just needs a
 Redis to count against, and it stays off until you provide one. If the store is
@@ -122,11 +124,12 @@ confirm. Env-var changes only take effect on a new deployment.
 
 ## Step 4 — Test it
 
-1. Open https://nonprofit-transparency-scorecard.vercel.app and submit an email
-   six or more times in quick succession (reload between tries).
-2. After the 5th request within a minute you should see: *"You're going a little
-   fast — please wait a moment and try again."* — and the app won't open until the
-   window resets.
+1. The quickest check is the failure limit: open
+   https://nonprofit-transparency-scorecard.vercel.app and submit an **invalid**
+   email (e.g. `nope`) 11+ times. After 10 bad tries you should get throttled.
+2. Or exceed the primary limit by submitting valid emails 31+ times within 10
+   minutes. Either way you'll see *"You're going a little fast — please wait a
+   moment and try again."* and the app won't open until the window resets.
 
 If you never hit the limit, the vars probably aren't set on the deployment that's
 serving — re-check Step 2 and confirm you redeployed (Step 3).

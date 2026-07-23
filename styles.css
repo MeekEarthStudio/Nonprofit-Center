@@ -116,6 +116,8 @@ input[type="email"]:focus{
   box-shadow: 0 0 0 4px rgba(67,160,71,.16);
 }
 input[type="email"].invalid{ border-color: var(--danger); box-shadow: 0 0 0 4px rgba(179,69,47,.12); }
+/* Honeypot: off-screen for humans, tempting for bots. Enforced server-side. */
+.hp-field{ position:absolute !important; left:-9999px !important; top:auto; width:1px; height:1px; overflow:hidden; }
 .gate-msg{ min-height:1.1em; font-size:.82rem; margin:-.3rem 0 1rem; }
 .gate-msg.err{ color: var(--danger); }
 .gate-msg.ok{ color: var(--green-700); }
