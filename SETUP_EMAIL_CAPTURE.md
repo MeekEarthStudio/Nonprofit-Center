@@ -1,16 +1,26 @@
-# Set up email capture → Google Sheet
+# Set up the Transparency Scorecard backend
 
-This connects the Transparency Scorecard's email gateway to your Google Sheet, so
-every submission appends a row. It takes about 3 minutes. You can do it yourself,
-hand it to a teammate, or paste it into **Claude for Chrome** to run in your browser.
+Two short setups for the live app. You can do them yourself, hand them to a
+teammate, or paste them into **Claude for Chrome** to run in your browser.
+
+- **Part A — Email capture → Google Sheet** (~3 min): every gateway submission
+  appends a row to your sheet.
+- **Part B — Rate limiting → Upstash Redis** (~2 min): caps requests per visitor
+  so nobody can spam the app.
+
+Both are independent; do either, both, or neither. The app works without them —
+this just turns on persistence and spam protection.
 
 **Reference values**
 - Live site: https://nonprofit-transparency-scorecard.vercel.app
 - Target sheet: https://docs.google.com/spreadsheets/d/130ovoHHtnqMaGoKpR_0PAahw8pF558NLvfnyXJ1TE9A/edit
 - Vercel project: `nonprofit-transparency-scorecard`
-- Env var to set: `SHEETS_WEBHOOK_URL` (plus optional `SHEETS_WEBHOOK_TOKEN`)
+- Env vars: `SHEETS_WEBHOOK_URL` (+ optional `SHEETS_WEBHOOK_TOKEN`) for Part A;
+  `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` for Part B
 
 ---
+
+# Part A — Email capture → Google Sheet
 
 ## Step 1 — Add the Apps Script to the sheet
 
@@ -70,6 +80,56 @@ If the row appears, capture is live. If not, see Troubleshooting.
 - **Changed the script after deploying?** Apps Script keeps the old code live until you **Deploy → Manage deployments → edit → New version**. Redeploy a new version after any edit.
 - **Set a `TOKEN` but rows don't write.** The `SHEETS_WEBHOOK_TOKEN` value in Vercel must match `TOKEN` in the script exactly, and you must redeploy Vercel (Step 3) after changing it.
 - **Still stuck.** The site never blocks visitors on a capture failure — people still get through the scorecard; only the email isn't recorded — so there's no user-facing outage while you sort it out.
+
+---
+
+# Part B — Rate limiting → Upstash Redis
+
+This caps `/api/capture` at **5 requests per 60 seconds per IP**, so nobody can
+script the endpoint to flood your sheet or burn function invocations. Over the
+limit, the visitor gets a "please wait a moment" message instead of getting in.
+
+Nothing to install — the code already ships with the limiter; it just needs a
+Redis to count against, and it stays off until you provide one. If the store is
+ever unreachable, the limiter **fails open** (allows the request) so a Redis
+outage never blocks a real signup.
+
+## Step 1 — Create a free Upstash Redis database
+
+1. Go to https://console.upstash.com and sign in (GitHub/Google login is fine).
+2. Click **Create Database**. Any name and the nearest region are fine; the free
+   plan is plenty.
+3. Open the database, and on its details page find the **REST API** section.
+   Copy two values:
+   - **UPSTASH_REDIS_REST_URL** (looks like `https://xxxx.upstash.io`)
+   - **UPSTASH_REDIS_REST_TOKEN** (a long token string)
+
+> Create the database directly at upstash.com (not through a third party) so the
+> variable names match what the code expects exactly.
+
+## Step 2 — Add the two env vars to Vercel
+
+1. Vercel project **`nonprofit-transparency-scorecard`** → **Settings → Environment Variables**.
+2. Add both (Production scope, or all environments):
+   - **Key:** `UPSTASH_REDIS_REST_URL`  **Value:** the REST URL from Step 1
+   - **Key:** `UPSTASH_REDIS_REST_TOKEN`  **Value:** the REST token from Step 1
+3. **Save.**
+
+## Step 3 — Redeploy
+
+Vercel project → **Deployments** → the latest deployment → **⋯ → Redeploy** →
+confirm. Env-var changes only take effect on a new deployment.
+
+## Step 4 — Test it
+
+1. Open https://nonprofit-transparency-scorecard.vercel.app and submit an email
+   six or more times in quick succession (reload between tries).
+2. After the 5th request within a minute you should see: *"You're going a little
+   fast — please wait a moment and try again."* — and the app won't open until the
+   window resets.
+
+If you never hit the limit, the vars probably aren't set on the deployment that's
+serving — re-check Step 2 and confirm you redeployed (Step 3).
 
 ---
 
