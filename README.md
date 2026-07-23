@@ -5,8 +5,34 @@ from Meek Earth Studio's **Deanwood benefit-concert prototype** (Jan 17, 2026, w
 STEP DC), then scores their own ticketed events against ten levers of donor
 transparency.
 
-Everything lives in **`index.html`** — no build step, no dependencies, no backend.
-Open it in any modern browser.
+The front end is a static site — `index.html` with `styles.css` and `app.js` —
+plus one serverless function at `api/capture.js`. No build step, no framework, no
+dependencies. Open `index.html` in any browser to preview; deploy the folder to
+Vercel (zero-config) to activate email capture.
+
+## Files
+
+| Path | Purpose |
+|---|---|
+| `index.html` | Markup for the gateway, the presentation slides, and the scorecard |
+| `styles.css` | The green/light design system |
+| `app.js` | All interactivity — gateway, charts, claim filters, plays, scoring, result |
+| `api/capture.js` | Vercel serverless function that validates + stores the captured email |
+
+## Email capture
+
+On submit, the gateway POSTs the address to `/api/capture`. That function validates
+server-side and forwards to HubSpot's public Forms API when these (non-secret)
+environment variables are set in the Vercel project:
+
+- `HUBSPOT_PORTAL_ID`
+- `HUBSPOT_FORM_GUID`
+
+With neither set, the function still accepts the request (so the experience works
+immediately after deploy) and reports `stored:false`. The gateway degrades
+gracefully: a capture outage — or opening `index.html` directly over `file://` —
+still lets the visitor through to the content. The gate is lead capture, not
+authentication.
 
 ## Flow
 
