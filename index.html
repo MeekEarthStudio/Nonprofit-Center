@@ -3,278 +3,224 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Transparency Scorecard · Meek Earth Studio</title>
-<meta name="description" content="An interactive transparency scorecard for nonprofit fundraising events, built on proven benefit-concert data." />
+<title>The Transparency Vault — Meek Earth Studio</title>
+<meta name="description" content="Why nonprofit transparency raises more money, how to practice it, and the Deanwood benefit concert that proved it — from Meek Earth Studio PBC." />
 <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="locked">
 
-<!-- ============================ GATEWAY ============================ -->
-<div id="gate">
-  <div class="gate-card">
-    <div class="brandmark">
-      <div class="leaf" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21c-4-6-8-8-8-12a8 8 0 0116 0c0 4-4 6-8 12z" fill="currentColor" opacity=".35"/><path d="M12 3c4 3 5 7 3 12M9 9c1.5 1 2.5 3 3 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+<!-- ============ 1. THE VAULT ============ -->
+<div class="vault-overlay" id="vaultOverlay">
+  <div class="vault-scene">
+    <div class="vault-frame">
+      <div class="vault-door" id="vaultDoor">
+        <svg class="vault-svg" viewBox="0 0 320 320" aria-hidden="true">
+          <circle cx="160" cy="160" r="152" class="v-rim"/>
+          <circle cx="160" cy="160" r="138" class="v-face"/>
+          <!-- bolts around the rim -->
+          <g class="v-bolts">
+            <circle cx="160" cy="30"  r="7"/><circle cx="252" cy="68"  r="7"/>
+            <circle cx="290" cy="160" r="7"/><circle cx="252" cy="252" r="7"/>
+            <circle cx="160" cy="290" r="7"/><circle cx="68"  cy="252" r="7"/>
+            <circle cx="30"  cy="160" r="7"/><circle cx="68"  cy="68"  r="7"/>
+          </g>
+          <!-- locking lugs that retract -->
+          <g class="v-lugs" id="vaultLugs">
+            <rect x="152" y="6"   width="16" height="26" rx="4"/>
+            <rect x="152" y="288" width="16" height="26" rx="4"/>
+            <rect x="6"   y="152" width="26" height="16" rx="4"/>
+            <rect x="288" y="152" width="26" height="16" rx="4"/>
+          </g>
+          <!-- handle wheel -->
+          <g class="v-wheel" id="vaultWheel">
+            <circle cx="160" cy="160" r="64" class="v-wheel-ring"/>
+            <line x1="160" y1="100" x2="160" y2="220"/>
+            <line x1="100" y1="160" x2="220" y2="160"/>
+            <line x1="118" y1="118" x2="202" y2="202"/>
+            <line x1="202" y1="118" x2="118" y2="202"/>
+            <circle cx="160" cy="160" r="18" class="v-hub"/>
+          </g>
+        </svg>
       </div>
-      <div><b>Meek Earth Studio</b><span>Public Benefit Corporation</span></div>
+      <div class="vault-glow" aria-hidden="true"></div>
     </div>
-    <div class="eyebrow">Transparency Scorecard</div>
-    <h1>See how your fundraising really measures up.</h1>
-    <p class="lede">An interactive walk through real benefit-concert data — then a scorecard that rates your own events on the ten levers of donor transparency.</p>
-    <form id="gateForm" novalidate>
-      <div class="field">
-        <label for="email">Enter your email to begin</label>
-        <input type="email" id="email" name="email" placeholder="you@organization.org" autocomplete="email" inputmode="email" />
-      </div>
-      <div class="hp-field" aria-hidden="true">
-        <label for="company_website">Company website (leave this blank)</label>
-        <input type="text" id="company_website" name="company_website" tabindex="-1" autocomplete="off" />
-      </div>
-      <div class="gate-msg" id="gateMsg" role="status" aria-live="polite"></div>
-      <button class="btn" type="submit" id="gateBtn">
-        Enter the experience
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </form>
-    <div class="gate-foot">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M6 10V8a6 6 0 1112 0v2m-9 0h6a3 3 0 013 3v4a3 3 0 01-3 3H9a3 3 0 01-3-3v-4a3 3 0 013-3z" stroke="currentColor" stroke-width="1.7"/></svg>
-      We save your email to add you to our mailing list. You can unsubscribe at any time. <a href="privacy.html" target="_blank" rel="noopener">Privacy policy</a>
-    </div>
+    <h1 class="vault-title">The Transparency Vault</h1>
+    <p class="vault-sub">Donors give more when the books are open.<br/>See the evidence, the methods, and the concert that proved it.</p>
+    <button class="btn btn-vault" id="openVaultBtn" type="button">Open</button>
+    <p class="vault-note">No email required. Nothing is collected.</p>
   </div>
 </div>
 
-<!-- ============================ APP ============================ -->
-<div id="app">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brandmark">
-        <div class="leaf" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21c-4-6-8-8-8-12a8 8 0 0116 0c0 4-4 6-8 12z" fill="currentColor" opacity=".35"/><path d="M12 3c4 3 5 7 3 12M9 9c1.5 1 2.5 3 3 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </div>
-        <b>Meek Earth Studio</b>
-      </div>
-      <div class="progress-wrap">
-        <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
-        <div class="progress-meta"><span id="progLabel">Introduction</span><span id="progCount">1 / 9</span></div>
-      </div>
-      <div class="who">Signed in as <b id="whoEmail">—</b></div>
-    </div>
-  </header>
+<!-- ============ JOURNEY ============ -->
+<div class="journey" id="journey" hidden>
 
-  <main class="stage" id="stage">
-
-    <!-- SLIDE 1: INTRO -->
-    <section class="slide active" id="slide-0" data-label="Introduction">
-      <div class="hero-badge"><span class="dotp"></span> Deanwood Prototype · January 17, 2026 · Washington, D.C.</div>
-      <h1>Transparency isn't a cost.<br>In the one real test behind this, it <span style="color:var(--green-600)">doubled conversion.</span></h1>
-      <p class="lede-lg">In January 2026, Meek Earth Studio produced a prototype benefit concert in Deanwood, D.C., with the nonprofit STEP&nbsp;DC. Every ticket routed a defined amount to the mission at the moment of purchase, the full revenue split was disclosed to every buyer — and buyers still chose to pay more. This is what the data proved, followed by a scorecard for your own events.</p>
-      <div class="stat-grid" style="margin-top:26px">
-        <div class="stat"><div class="k" data-count="54">0</div><div class="l">Tickets sold</div><div class="s">16 base ($35) · 38 premium ($75)</div></div>
-        <div class="stat"><div class="k" data-count="70.37" data-suffix="%">0</div><div class="l">Chose the premium tier</div><div class="s">vs. 20–30% industry benchmark</div></div>
-        <div class="stat"><div class="k"><small>$</small><span data-count="1890">0</span></div><div class="l">To the nonprofit, guaranteed</div><div class="s">Full base amount on every ticket</div></div>
-        <div class="stat"><div class="k"><small>$</small><span data-count="0">0</span></div><div class="l">Marketing spend</div><div class="s">All 54 buyers acquired organically</div></div>
-      </div>
-      <div class="callout" style="margin-top:22px">
-        <strong>One event, 54 buyers — a starting point, not a proof.</strong> We say so plainly. The honest range around that conversion figure (57–81% at 95% confidence) still clears the benchmark ceiling. Use the arrows below, the dots, or your keyboard <kbd>←</kbd> <kbd>→</kbd> to move through the breakdown.
-      </div>
-    </section>
-
-    <!-- SLIDE 2: METRICS -->
-    <section class="slide" id="slide-1" data-label="Verified Metrics">
-      <div class="eyebrow">The Verified Ledger</div>
-      <h2>Every number, reconstructed from the transaction record.</h2>
-      <p class="lede-lg">These are transaction-record facts — the figures that reconcile exactly against the event's profit-and-loss. Nothing here is an estimate.</p>
-      <div class="stat-grid" style="margin-top:22px">
-        <div class="stat reveal"><div class="k"><small>$</small><span data-count="3615">0</span></div><div class="l">Gross revenue</div><div class="s">Avg. $66.94/buyer — 1.9× the base price</div></div>
-        <div class="stat reveal"><div class="k" data-count="52.3" data-suffix="%">0</div><div class="l">Effective nonprofit share</div><div class="s">$1,890 of $3,615 gross</div></div>
-        <div class="stat reveal"><div class="k"><small>$</small><span data-count="289.35" data-dec="2">0</span></div><div class="l">Net income to studio</div><div class="s">Positive on the first attempt</div></div>
-        <div class="stat reveal"><div class="k"><small>~$</small><span data-count="205">0</span></div><div class="l">Voluntary checkout tips</div><div class="s">Unprompted, above sticker price</div></div>
-        <div class="stat reveal"><div class="k" data-count="4.43" data-suffix="%">0</div><div class="l">Real all-in fee rate</div><div class="s">vs. ~2.9% headline; studio absorbed 100%</div></div>
-        <div class="stat reveal"><div class="k"><small>$</small><span data-count="862.5" data-dec="2">0</span><small>+tips</small></div><div class="l">Artist payout</div><div class="s">Half the premium pool + half of tips</div></div>
-        <div class="stat reveal"><div class="k" data-count="47" data-suffix="%">0</div><div class="l">Break-even conversion floor</div><div class="s">Actual conversion cleared it by 23 pts</div></div>
-        <div class="stat reveal"><div class="k"><small>$</small><span data-count="413">0</span></div><div class="l">Operating expenses</div><div class="s">Website ($213) + software ($200)</div></div>
-      </div>
-    </section>
-
-    <!-- SLIDE 3: CONVERSION -->
-    <section class="slide" id="slide-2" data-label="Conversion">
-      <div class="eyebrow">The Headline Result</div>
-      <h2>Seven in ten buyers upgraded — with the full split disclosed.</h2>
-      <p class="lede-lg">Even at the low end of the 95% confidence interval, premium conversion roughly <b>doubles</b> the ceiling of the typical event-upsell benchmark.</p>
-      <div class="chart-shell" style="margin-top:20px" id="convChart">
-        <div class="chart-title">Premium-tier conversion vs. industry benchmark</div>
-        <div class="chart-sub">Share of buyers who chose the premium option · n = 54 · hover a bar for detail</div>
-        <div class="barrow">
-          <div class="cap">Deanwood<br>prototype</div>
-          <div class="bartrack" title="70.37% — 38 of 54 buyers chose premium">
-            <div class="ci-band" id="ciBand" style="left:57%; width:24%;"></div>
-            <div class="barfill" data-w="70.37" style="background:linear-gradient(90deg,var(--green-700),var(--green-500));"><span class="val">70.37%</span></div>
-          </div>
-        </div>
-        <div class="barrow">
-          <div class="cap">Industry<br>benchmark</div>
-          <div class="bartrack" title="Typical event-upsell conversion: 20–30%">
-            <div class="barfill ghost" data-w="30" style="background:var(--surface-3); border:1px dashed var(--border-strong);"><span class="val">20–30%</span></div>
-          </div>
-        </div>
-        <div class="ci-note">◧ Hatched band = 95% confidence interval (≈57%–81%, Wilson at n=54). The dashed edges mark the honest range — the low edge alone still clears the benchmark.</div>
-      </div>
-      <div class="two" style="margin-top:16px">
-        <div class="callout"><b>What it means.</b> Disclosure of the exact split was present for every upgrade decision. Buyers paid more <em>with</em> full transparency, not in spite of hidden costs.</div>
-        <div class="callout warn"><b>What it doesn't prove.</b> Co-occurrence isn't causation. We can't yet say buyers paid more <em>because of</em> transparency — only that the two happened together. Measuring motive is the next step.</div>
-      </div>
-    </section>
-
-    <!-- SLIDE 4: REVENUE SPLIT -->
-    <section class="slide" id="slide-3" data-label="Where the Money Went">
-      <div class="eyebrow">Follow Every Dollar</div>
-      <h2>$3,615 in gross revenue — here's exactly where it went.</h2>
-      <p class="lede-lg">The mission's share was never contingent on the event's performance. Every ticket carried the full base amount to STEP&nbsp;DC at the moment of sale.</p>
-      <div class="chart-shell" style="margin-top:20px">
-        <div class="chart-title">Distribution of $3,615 gross revenue</div>
-        <div class="chart-sub">Hover any segment · widths are proportional to dollars</div>
-        <div class="splitbar" id="splitBar">
-          <div class="seg" data-amt="1890" style="background:var(--c-nonprofit)" title="Nonprofit (STEP DC): $1,890.00"><span class="segval">Nonprofit</span></div>
-          <div class="seg" data-amt="862.5" style="background:var(--c-artist)" title="Artist payout: $862.50 + tip share"><span class="segval">Artist</span></div>
-          <div class="seg" data-amt="289.35" data-dark="1" style="background:var(--c-studio)" title="Studio net income: $289.35"><span class="segval">Studio net</span></div>
-          <div class="seg" data-amt="160.15" style="background:var(--c-fees)" title="Processing fees: $160.15 (4.43%)"><span class="segval">Fees</span></div>
-          <div class="seg" data-amt="413" style="background:var(--c-opex)" title="Operating expenses: $413.00"><span class="segval">Opex</span></div>
-        </div>
-        <div class="splitlegend">
-          <div class="row"><span class="sw" style="background:var(--c-nonprofit)"></span><span class="nm">Nonprofit <span class="pct">52.3% share</span></span><span class="amt">$1,890</span></div>
-          <div class="row"><span class="sw" style="background:var(--c-artist)"></span><span class="nm">Artist <span class="pct">+ tip share</span></span><span class="amt">$862.50</span></div>
-          <div class="row"><span class="sw" style="background:var(--c-studio)"></span><span class="nm">Studio net <span class="pct">after all costs</span></span><span class="amt">$289.35</span></div>
-          <div class="row"><span class="sw" style="background:var(--c-fees)"></span><span class="nm">Processing fees <span class="pct">absorbed by studio</span></span><span class="amt">$160.15</span></div>
-          <div class="row"><span class="sw" style="background:var(--c-opex)"></span><span class="nm">Operating expenses <span class="pct">web + software</span></span><span class="amt">$413.00</span></div>
-        </div>
-      </div>
-      <div class="callout" style="margin-top:16px"><b>The floor beneath the mission.</b> "If the event does well, you'll get a check" became "every ticket feeds a family, guaranteed." The second sentence sells tickets; the first one doesn't.</div>
-    </section>
-
-    <!-- SLIDE 5: CLAIM CLASSIFICATION -->
-    <section class="slide" id="slide-4" data-label="What's Proven">
-      <div class="eyebrow">Honesty About the Evidence</div>
-      <h2>Not every claim survives scrutiny. Here's the classification.</h2>
-      <p class="lede-lg">We sort every statement from the prototype narrative into what the data <b>proves</b>, what it <b>reasonably infers</b>, and what it <b>cannot support</b>. Filter to see each tier.</p>
-      <div class="filters" id="claimFilters" style="margin-top:18px">
-        <button class="chip active" data-f="all">All <span class="cnt" id="cnt-all">0</span></button>
-        <button class="chip" data-f="proven">Proven <span class="cnt" id="cnt-proven">0</span></button>
-        <button class="chip" data-f="inference">Supported inference <span class="cnt" id="cnt-inference">0</span></button>
-        <button class="chip" data-f="notsupported">Not supported <span class="cnt" id="cnt-notsupported">0</span></button>
-      </div>
-      <div id="claimList"></div>
-      <div class="callout warn" style="margin-top:6px"><b>Why hold this line?</b> The gap between "buyers paid more" (proven) and "buyers paid more <em>because of</em> transparency" (not yet supported) is exactly what one optional checkout question at the next concert is designed to close.</div>
-    </section>
-
-    <!-- SLIDE 6: LOGIC CHAIN -->
-    <section class="slide" id="slide-5" data-label="The Proven Chain">
-      <div class="eyebrow">The Investor-Safe Logic</div>
-      <h2>The proven chain, stated at the precision it earns.</h2>
-      <div class="card" style="margin-top:18px">
-        <div class="chain">
-          <div class="step"><div class="num">1</div><div class="body">Every ticket guaranteed the nonprofit its full base amount at the moment of purchase — the mission's revenue was <b>never contingent</b> on event performance.</div></div>
-          <div class="step"><div class="num">2</div><div class="body">With the complete revenue split disclosed at checkout, <b>70.37%</b> of buyers chose the premium tier — between 57% and 81% at 95% confidence, versus a 20–30% industry benchmark.</div></div>
-          <div class="step"><div class="num">3</div><div class="body">Buyers demonstrated willingness to pay <b>above the listed maximum</b>: ~$205 in unprompted tips at checkout.</div></div>
-          <div class="step"><div class="num">4</div><div class="body">The event netted positive for the studio (<b>$289.35</b>) with zero marketing spend, while delivering the nonprofit a <b>52% effective share</b>.</div></div>
-          <div class="step concl"><div class="num">∴</div><div class="body">Full transparency coexisted with category-leading conversion and above-sticker generosity. Buyers upgraded to fund the artist, the studio, or both — the disjunctive claim the data supports — and did so <b>despite</b> a fully disclosed studio share, not demonstrably <b>because</b> of it.</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 7: NINE PLAYS -->
-    <section class="slide" id="slide-6" data-label="The Nine Plays">
-      <div class="eyebrow">From Data to Practice</div>
-      <h2>Nine plays any nonprofit can run.</h2>
-      <p class="lede-lg">Each play translates something the prototype proved into a step you can apply to your own events. Tap a card to open it.</p>
-      <div class="plays" id="playsGrid" style="margin-top:20px"></div>
-      <div class="callout" style="margin-top:18px"><b>The pattern behind all nine:</b> transparency is not a compliance cost. In the one real-world test behind this playbook, full disclosure of where every dollar went coexisted with conversion more than double the benchmark. <b>People pay more when they can see.</b></div>
-    </section>
-
-    <!-- SLIDE 8: SCORECARD -->
-    <section class="slide" id="slide-7" data-label="Score Your Event">
-      <div class="eyebrow">The Interactive Scorecard</div>
-      <h2>Now score your own most recent ticketed event.</h2>
-      <p class="lede-lg">Rate your event against each criterion (0, 1, or 2 points). Your total updates live. The criteria mirror the nine plays plus a tenth — post-event impact reporting — that closes the trust loop for next time.</p>
-
-      <div class="score-rail" id="scoreRail">
-        <div><div class="big"><span id="railScore">0</span><small>&nbsp;/ 20</small></div></div>
-        <div class="meter"><i id="railMeter"></i></div>
-        <div class="rate" id="railRate">Not yet rated</div>
-        <div class="answered" id="railAnswered">0 of 10 answered</div>
-      </div>
-
-      <div class="sc-layout" id="scList" style="margin-top:16px"></div>
-
-      <div style="margin-top:22px; text-align:center">
-        <button class="btn" id="revealScoreBtn" style="max-width:340px; margin:0 auto;" disabled>
-          Reveal my transparency scorecard
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="answered" id="revealHint" style="margin-top:10px">Answer all ten criteria to reveal your scorecard.</div>
-      </div>
-    </section>
-
-    <!-- SLIDE 9: RESULT -->
-    <section class="slide" id="slide-result" data-label="Your Scorecard">
-      <div class="eyebrow">Your Transparency Scorecard</div>
-      <div class="result-card">
-        <div class="result-hero" id="resHero">
-          <div class="rk" id="resPreparedFor">Prepared for you</div>
-          <div class="ring-wrap">
-            <div class="ring" id="resRing">
-              <svg width="132" height="132" viewBox="0 0 132 132">
-                <circle cx="66" cy="66" r="58" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="12"/>
-                <circle id="ringArc" cx="66" cy="66" r="58" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4"/>
-              </svg>
-              <div class="center"><b id="resScore">0</b><span>OF 20</span></div>
-            </div>
-            <div>
-              <div class="rk">Rating</div>
-              <div class="rt" id="resRating">—</div>
-            </div>
-          </div>
-        </div>
-        <div class="result-body">
-          <p class="means" id="resMeans"></p>
-
-          <div class="bench">
-            <span>◈</span>
-            <span>For reference, the <b class="b">Deanwood prototype</b> would score <b class="b">13 / 20 — "Building Trust"</b> on this same scorecard. Even the event behind the data has room to grow (its motive question and impact report were still to come).</span>
-          </div>
-
-          <div class="next-moves" id="resMoves">
-            <h4>Your highest-leverage next moves</h4>
-            <div id="movesList"></div>
-          </div>
-
-          <div class="breakdown" id="resBreakdown"></div>
-
-          <div class="result-actions">
-            <button class="btn secondary" id="printBtn">Save / print this scorecard</button>
-            <button class="btn ghost" id="restartBtn">Re-score another event</button>
-          </div>
-
-          <p class="honest">Two notes on honest use. First, this scorecard measures <b>transparency and structure</b> — the levers the prototype tested — not event quality, cause worthiness, or community depth, which matter at least as much. Second, the underlying evidence base is one 54-person event; treat your score as a structured self-audit, not a guarantee that any score predicts a revenue outcome.</p>
-        </div>
-      </div>
-      <div class="section-foot">Meek Earth Studio · PBC &nbsp;·&nbsp; <span class="mfm">Music for the meek.</span></div>
-    </section>
-
-  </main>
-
-  <nav class="nav">
-    <div class="nav-inner">
-      <button class="btn ghost" id="prevBtn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Back
-      </button>
-      <div class="dots" id="dots"></div>
-      <button class="btn secondary" id="nextBtn">
-        Next
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+  <nav class="topnav" aria-label="Sections">
+    <span class="topnav-brand">Meek&nbsp;Earth&nbsp;Studio</span>
+    <div class="topnav-links">
+      <a href="#why">Why</a>
+      <a href="#how">How</a>
+      <a href="#deanwood">Deanwood</a>
+      <a href="#studio">The Studio</a>
+      <a href="#contact">Contact</a>
     </div>
   </nav>
+
+  <!-- ============ 2. REASONS ============ -->
+  <section class="section" id="why">
+    <header class="section-head">
+      <p class="kicker">Step 1 · The evidence</p>
+      <h2>Reasons to be more transparent</h2>
+      <p class="lede">Transparency isn't a virtue signal — it's the strongest lever on donor trust, and trust is the gate every gift passes through. The 2026 research is unambiguous.</p>
+    </header>
+
+    <div class="reason-grid">
+      <article class="reason-card reveal">
+        <div class="reason-stat"><span class="count" data-count="67.7" data-decimals="1">0</span><span class="unit">%</span></div>
+        <h3>of donors say trusting a charity is essential before giving</h3>
+        <p>— yet only <strong>18.3%</strong> report high trust in charities, and donor openness to giving sits at just <strong>42.1%</strong>. That gap between required trust and felt trust is the space transparency fills.</p>
+        <p class="cite">Source: <a href="https://give.org/donor-trust-report" target="_blank" rel="noopener">Give.org Donor Trust Report 2026</a>, BBB Wise Giving Alliance — December 2025 survey of 1,500+ U.S. adults, nine years of trend data.</p>
+      </article>
+
+      <article class="reason-card reveal">
+        <div class="reason-stat">+<span class="count" data-count="62">0</span><span class="unit">%</span></div>
+        <h3>more contributions for nonprofits holding a Candid Seal of Transparency</h3>
+        <p>Across <strong>148,786 public charities</strong> (FY2022–2023 Form 990s), Seal holders averaged 62% more in contributions. Small nonprofits under $1M saw a <strong>61% lift</strong> — transparency pays most where budgets are tightest.</p>
+        <p class="cite">Source: <a href="https://search.issuelab.org/resource/do-nonprofits-with-a-candid-seal-of-transparency-raise-more-funds.html" target="_blank" rel="noopener">Candid white paper — "Do Nonprofits With a Candid Seal of Transparency Raise More Funds?"</a></p>
+      </article>
+
+      <article class="reason-card reveal">
+        <div class="reason-stat">+<span class="count" data-count="53">0</span><span class="unit">%</span></div>
+        <h3>more contributions in earlier GuideStar/Candid research</h3>
+        <p>The 2026 finding isn't a one-off. Harris &amp; Neely found transparency-seal holders averaged <strong>53% more</strong> in contributions the following year — the same signal, a research cycle earlier.</p>
+        <p class="cite">Source: <a href="https://candid.org/blogs/research-shows-nonprofit-transparency-matters/" target="_blank" rel="noopener">GuideStar/Candid — "Research shows nonprofit transparency matters"</a> (Harris &amp; Neely).</p>
+      </article>
+
+      <article class="reason-card reveal">
+        <div class="reason-stat"><span class="count" data-count="1">0</span><span class="unit">st</span></div>
+        <h3>Nonprofits remain America's most-trusted sector</h3>
+        <p>Trust in nonprofits runs higher than in any other sector — and the study attributes that standing directly to <strong>transparency and direct engagement</strong>. It's an advantage to protect, not to assume.</p>
+        <p class="cite">Source: <a href="https://thenonprofittimes.com/npt_articles/americans-trust-npos-philanthropy-not-so-much/" target="_blank" rel="noopener">Independent Sector — Trust in Nonprofits and Philanthropy 2026</a> (3,000 U.S. adults + focus groups).</p>
+      </article>
+
+      <article class="reason-card reveal">
+        <div class="reason-stat"><span class="count" data-count="53">0</span><span class="unit">%</span></div>
+        <h3>of donors rank fee &amp; fund-use transparency as the top platform trust driver</h3>
+        <p>On giving platforms, donors want to see where money goes: fee/fund-use transparency (<strong>53%</strong>) and accurate charity information (<strong>51%</strong>) lead the list. <strong>46%</strong> say total platform fees should stay at or under 5%, and <strong>62%</strong> expect funds delivered to the charity within three days.</p>
+        <p class="cite">Source: <a href="https://give.org/donor-trust-report/2026-special-report-online-giving-platforms-donor-expectations" target="_blank" rel="noopener">Give.org Donor Trust Special Report: Online Giving Platforms and Donor Expectations (2026)</a>.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 3. METHODS ============ -->
+  <section class="section section-alt" id="how">
+    <header class="section-head">
+      <p class="kicker">Step 2 · The practice</p>
+      <h2>Methods to be more transparent</h2>
+      <p class="lede">Six concrete practices, each drawn from a named source — a transparency guide should show its own receipts.</p>
+    </header>
+
+    <ol class="method-list">
+      <li class="method reveal">
+        <h3>Publish GAAP-compliant financial statements</h3>
+        <p>Follow ASC 958 (the nonprofit accounting standard), include real footnote disclosures, and commission an independent audit when scale warrants it. Post the results where donors can find them.</p>
+        <p class="cite">Source: <a href="https://www.gggllp.com/best-practices-for-transparency-in-financial-reporting-for-nonprofits/" target="_blank" rel="noopener">Gray, Gray &amp; Gray, LLP — Best Practices for Transparency in Financial Reporting for Nonprofits</a>.</p>
+      </li>
+      <li class="method reveal">
+        <h3>File the Form 990 on time, every year</h3>
+        <p>Know your filing threshold and deadline for the 2026 reporting cycle. Three consecutive missed filings trigger <em>automatic</em> revocation of tax-exempt status — staying current is transparency's floor.</p>
+        <p class="cite">Source: <a href="https://missionm.net/nonprofit-transparency-checklist/" target="_blank" rel="noopener">Mission M — Nonprofit Transparency Checklist (2026 reporting cycle)</a>, citing the National Council of Nonprofits.</p>
+      </li>
+      <li class="method reveal">
+        <h3>Earn a Candid Seal of Transparency</h3>
+        <p>The 2026 Seal process is streamlined and free — and it's the practice with the clearest measured payoff (the 62% contribution lift above). Claim your profile, complete it, renew it annually.</p>
+        <p class="cite">Source: <a href="https://candid.org/blogs/candid-2026-seals-of-transparency-made-faster-easier-nonprofits-more-donations/" target="_blank" rel="noopener">Candid — Introducing the 2026 Seals of Transparency</a>.</p>
+      </li>
+      <li class="method reveal">
+        <h3>Share dashboards and impact reports</h3>
+        <p>Publish an annual report and a living dashboard of program outcomes, and keep state charitable-registration filings current (requirements vary by state — NASCO maintains the map).</p>
+        <p class="cite">Source: <a href="https://www.zeffy.com/blog/nonprofit-organization-transparency" target="_blank" rel="noopener">Zeffy — Best Practices for Nonprofit Financial Transparency (2026 Guide)</a>.</p>
+      </li>
+      <li class="method reveal">
+        <h3>Enforce a real conflict-of-interest policy</h3>
+        <p>Annual written disclosures from every board member, documented recusals when conflicts arise, and minutes that show it happened. Governance transparency is donor transparency.</p>
+        <p class="cite">Source: <a href="https://boardable.com/resources/nonprofit-board-best-practices/" target="_blank" rel="noopener">Boardable — Nonprofit Board Best Practices in 2026</a>.</p>
+      </li>
+      <li class="method reveal">
+        <h3>Disclose fees and fund flow at the point of donation</h3>
+        <p>Tell donors what the platform keeps, what the charity nets, and when the money arrives — before they give, not after. This is exactly where donor expectations are strictest.</p>
+        <p class="cite">Source: <a href="https://give.org/donor-trust-report/2026-special-report-online-giving-platforms-donor-expectations" target="_blank" rel="noopener">Give.org Donor Trust Special Report (2026)</a> — fee transparency 53%, accurate information 51%, ≤5% fees 46%, three-day delivery 62%.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ 4. DEANWOOD ============ -->
+  <section class="section" id="deanwood">
+    <header class="section-head">
+      <p class="kicker">Step 3 · The proof</p>
+      <h2>The Deanwood concert</h2>
+      <p class="lede">On <strong>January 17, 2026</strong>, Meek Earth Studio produced a benefit concert in Deanwood, Washington, D.C., featuring artist <strong>Grace J. Reid</strong>, in support of <strong>STEP DC</strong>. The experiment: disclose the full revenue split to every buyer at checkout — artist's share, nonprofit's share, studio's share, fees — and see what radical transparency does to giving behavior.</p>
+    </header>
+
+    <div class="dw-stats">
+      <div class="dw-stat reveal"><span class="dw-num"><span class="count" data-count="54">0</span></span><span class="dw-label">tickets sold — 16 base ($35), 38 premium ($75)</span></div>
+      <div class="dw-stat reveal"><span class="dw-num"><span class="count" data-count="70.37" data-decimals="2">0</span>%</span><span class="dw-label">chose the premium ticket — against a 20–30% industry benchmark</span></div>
+      <div class="dw-stat reveal"><span class="dw-num">$<span class="count" data-count="3615" data-comma="1">0</span></span><span class="dw-label">gross revenue, with $0 spent on marketing</span></div>
+      <div class="dw-stat reveal"><span class="dw-num">$<span class="count" data-count="1890" data-comma="1">0</span></span><span class="dw-label">delivered to STEP DC — 52.3% of gross</span></div>
+    </div>
+
+    <p class="dw-note reveal">When buyers could see exactly where every dollar went, more than double the benchmark share paid the premium price. One 54-buyer event is a prototype, not a law of nature — but it points the same direction as all the research above.</p>
+
+    <figure class="video-wrap reveal">
+      <div class="video-frame">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/b2GAGXhVmvI"
+          title="Deanwood benefit concert — Meek Earth Studio"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen></iframe>
+      </div>
+      <figcaption>Watch the Deanwood concert.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ 5. MEEK EARTH STUDIO ============ -->
+  <section class="section section-alt" id="studio">
+    <header class="section-head">
+      <p class="kicker">Step 4 · The model</p>
+      <h2>Meek Earth Studio PBC</h2>
+    </header>
+
+    <div class="studio-hero reveal">
+      <img src="assets/meek-earth-logo.jpeg" alt="Meek Earth Studio logo" class="studio-logo" width="1280" height="1280" />
+      <p class="lede studio-copy">Meek Earth Studio is a public benefit corporation that produces benefit concerts with transparency built into the ticket itself. Our value to nonprofits is a revenue model any donor can hold in their head:</p>
+    </div>
+
+    <div class="thirds reveal" role="img" aria-label="Revenue split: one third to artists, one third to the nonprofit, one third to the studio">
+      <div class="third third-artist"><span class="third-frac">⅓</span><span class="third-who">to the artists</span><span class="third-why">Musicians are paid fairly, up front — talent isn't asked to donate its rent.</span></div>
+      <div class="third third-nonprofit"><span class="third-frac">⅓</span><span class="third-who">to the nonprofit</span><span class="third-why">A predictable, disclosed share of every ticket goes straight to the mission.</span></div>
+      <div class="third third-studio"><span class="third-frac">⅓</span><span class="third-who">to the studio</span><span class="third-why">Production, venue, and operations — the machinery that makes the night happen.</span></div>
+    </div>
+
+    <p class="studio-note reveal">The split is disclosed to every buyer at checkout. That's the whole point: the transparency the research says donors reward is the same transparency our model runs on. Nonprofits get a fundraising event, a fair-pay story, and open books — without building any of it themselves.</p>
+  </section>
+
+  <!-- ============ 6. CONTACT ============ -->
+  <section class="section section-contact" id="contact">
+    <header class="section-head">
+      <p class="kicker">Step 5 · The invitation</p>
+      <h2>Partner with Meek Earth Studio</h2>
+      <p class="lede">Want a benefit concert with the books open — a third to the artists, a third to your mission, a third to the studio? Let's talk.</p>
+    </header>
+    <a class="btn btn-contact" href="mailto:cbreid3@meekearthstudio.net?subject=Partnering%20with%20Meek%20Earth%20Studio">cbreid3@meekearthstudio.net</a>
+    <p class="contact-sub">Carlton B. Reid III · Meek Earth Studio PBC</p>
+  </section>
+
+  <footer class="footer">
+    <p>Meek Earth Studio PBC · <em>Music for the meek.</em></p>
+    <p class="footer-fine">Deanwood figures are from a single 54-buyer prototype event (Jan 17, 2026). All research claims are cited inline above. This page collects no personal data.</p>
+  </footer>
+
 </div>
 
 <script src="app.js"></script>

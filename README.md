@@ -1,101 +1,68 @@
-# Nonprofit Transparency Scorecard
+# The Transparency Vault
 
-An interactive, single-page web app that walks a visitor through the proven data
-from Meek Earth Studio's **Deanwood benefit-concert prototype** (Jan 17, 2026, with
-STEP DC), then scores their own ticketed events against ten levers of donor
-transparency.
+A single-page web experience from **Meek Earth Studio PBC** that opens with a
+vault-door animation and walks a visitor through the case for nonprofit
+transparency — the 2026 research (with inline citations), the concrete
+practices, and the Deanwood benefit-concert prototype that put them to work.
 
-The front end is a static site — `index.html` with `styles.css` and `app.js` —
-plus one serverless function at `api/capture.js`. No build step, no framework, no
-dependencies. Open `index.html` in any browser to preview; deploy the folder to
-Vercel (zero-config) to activate email capture.
+The site is fully static — `index.html`, `styles.css`, `app.js`, and one logo
+image. No build step, no framework, no serverless functions, and **no data
+collection**: there is no email gate, no analytics beacon, no backend. Open
+`index.html` in any browser to preview; deploy the folder to Vercel
+(zero-config) to publish.
 
 **Live:** https://nonprofit-transparency-scorecard.vercel.app/
+
+## The journey
+
+1. **The vault** — a full-screen vault door with a single **Open** button. The
+   wheel spins, the lugs retract, the door swings, and the page unlocks.
+2. **Reasons to be more transparent** — the 2026 donor-trust evidence: the
+   Give.org trust gap (67.7% say trust is essential vs. 18.3% high trust), the
+   Candid Seal contribution lifts (+62% across 148,786 charities; +61% for
+   small nonprofits), earlier GuideStar/Candid research (+53%), Independent
+   Sector's sector-trust findings, and platform fee-transparency expectations.
+3. **Methods to be more transparent** — six practices, each with an explicit
+   named citation rendered at full body-copy size (GAAP/ASC 958 reporting,
+   Form 990 discipline, Candid Seals, dashboards/impact reports,
+   conflict-of-interest enforcement, point-of-donation fee disclosure).
+4. **The Deanwood concert** — the Jan 17, 2026 benefit in Deanwood, DC for
+   STEP DC (artist: Grace J. Reid): 54 tickets, 70.37% premium conversion
+   against a 20–30% benchmark, $3,615 gross, $1,890 delivered to the
+   nonprofit — with the honesty note that it's a single 54-buyer prototype —
+   plus the embedded concert video.
+5. **Meek Earth Studio PBC** — the studio logo and the thirds model: ⅓ of
+   revenue to the artists, ⅓ to the nonprofit, ⅓ to the studio, disclosed to
+   every buyer at checkout.
+6. **Contact** — cbreid3@meekearthstudio.net to explore a partnership.
 
 ## Files
 
 | Path | Purpose |
 |---|---|
-| `index.html` | Markup for the gateway, the presentation slides, and the scorecard |
-| `styles.css` | The green/light design system |
-| `app.js` | All interactivity — gateway, charts, claim filters, plays, scoring, result |
-| `api/capture.js` | Vercel serverless function that validates + stores the captured email |
+| `index.html` | All markup for the vault and the five journey sections |
+| `styles.css` | The green/light design system, vault animation, print styles |
+| `app.js` | Vault choreography, scroll reveals, animated counters, nav highlighting |
+| `assets/meek-earth-logo.jpeg` | The Meek Earth Studio logo |
+| `vercel.json` | Security headers (CSP allows the YouTube-nocookie embed) |
 
-## Email capture
+## Design notes
 
-On submit, the gateway POSTs the address to `/api/capture`. That function validates
-server-side and fans out to whichever destinations are configured via environment
-variables in the Vercel project (Settings → Environment Variables). Any subset can
-be enabled at once; the email counts as stored if at least one succeeds.
+- **Theme:** light, green palette (brand accent `#8BC53F`).
+- **Citations as credibility:** every research claim carries its source inline
+  at the same font size as body copy — never fine print.
+- **Video:** embedded via `youtube-nocookie.com` (privacy-enhanced mode); the
+  CSP's `frame-src` allows only YouTube's embed origins.
+- **Accessibility:** `prefers-reduced-motion` skips the vault and counter
+  animations; keyboard focus outlines; the thirds graphic has a text
+  alternative. Printing hides the vault and expands citation URLs.
 
-**Google Sheet (via an Apps Script web app):**
+## Sources
 
-- `SHEETS_WEBHOOK_URL` — the Apps Script `/exec` URL
-- `SHEETS_WEBHOOK_TOKEN` — optional shared secret (must match the script)
-
-Setup: open `google-apps-script.gs`, follow its header instructions to paste the
-script into the target sheet, deploy it as a web app, then set the two variables
-above and redeploy. Rows land as `Timestamp | Email | Source`.
-
-**HubSpot (via its public Forms API — non-secret IDs):**
-
-- `HUBSPOT_PORTAL_ID`
-- `HUBSPOT_FORM_GUID`
-
-With none set, the function still accepts the request (so the experience works
-immediately after deploy) and reports `stored:false`. The gateway degrades
-gracefully: a capture outage — or opening `index.html` directly over `file://` —
-still lets the visitor through to the content. The gate is lead capture, not
-authentication.
-
-## Spam protection (rate limiting)
-
-`/api/capture` enforces durable, two-tier per-IP rate limits backed by Upstash
-Redis: a **generous primary limit** (30 requests / 10 min, sliding window) sized
-so a NATed office or conference network isn't locked out, plus a **stricter
-failure-keyed limit** (10 bad/suspicious requests — invalid emails, honeypot
-hits, rejected origins — / 10 min) since abuse is characterised by failures. The
-limiter runs before any Sheet/HubSpot write, so throttled requests cost no
-third-party quota. It activates only when these env vars are set — create a free
-Upstash Redis database and add them to the Vercel project:
-
-- `UPSTASH_REDIS_REST_URL`
-- `UPSTASH_REDIS_REST_TOKEN`
-
-Over the limit returns `429` with a `Retry-After` header; the gateway shows a
-"please wait a moment" message and doesn't open the app. If the vars are unset —
-or Redis is ever unreachable — the limiter **fails open** (allows the request) so
-a store outage never blocks a real signup.
-
-## Flow
-
-1. **Email gateway** — a valid email address is required to enter. Validation is
-   client-side only; the address never leaves the browser. It's used to personalize
-   the final scorecard ("Prepared for …").
-2. **Interactive data breakdown** of the two source documents:
-   - Verified ledger (animated metric counters)
-   - Premium-conversion vs. benchmark bar chart with the 95% confidence band
-   - "Where every dollar went" proportional revenue-split chart
-   - Claim classification (Proven / Supported inference / Not supported) with filters
-   - The proven, investor-safe logic chain
-   - The nine fundraising plays (expandable cards)
-3. **Interactive scorecard** — ten criteria scored 0/1/2 with a live running total.
-4. **Result card** — score out of 20, rating band (Transparency Leader / Building
-   Trust / Highest Upside), a per-criterion breakdown, prioritized next moves, and a
-   comparison against how the prototype itself would score (13/20). Print/save enabled.
-
-## Design
-
-- **Theme:** light, green palette (brand accent `#8BC53F` from the source documents).
-- **Accessibility:** charts are direct-labeled so identity is never color-alone;
-  keyboard navigation (`←` / `→`), focus-visible outlines, and live-region status
-  messages are included.
-
-## Source material
-
-Content is drawn from two internal Meek Earth Studio documents: *Deanwood Prototype —
-Proven Metrics & Validated Logic* and *The Nonprofit Event Fundraising Playbook*. Per
-those documents' own honesty notes, the evidence base is a single 54-buyer event; the
-scorecard is a structured self-audit, not a revenue guarantee.
+Research citations are compiled in the page itself; figures for the Deanwood
+prototype come from internal Meek Earth Studio documents (*Deanwood Prototype —
+Proven Metrics & Validated Logic* and *The Nonprofit Event Fundraising
+Playbook*). Per those documents' own honesty notes, the evidence base is a
+single 54-buyer event.
 
 _Music for the meek._
