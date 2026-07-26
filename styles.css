@@ -309,7 +309,70 @@ a:focus-visible, button:focus-visible {
 }
 
 /* ============================================================
-   4. DEANWOOD
+   4. SCORECARD
+   ============================================================ */
+
+.score-rail {
+  position: sticky;
+  top: 58px;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--green-900);
+  color: #f2f9ec;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 1.02rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+.score-rail strong { color: var(--lime); font-size: 1.2em; }
+#railAnswered { color: #cfe3c4; font-size: 0.95rem; }
+
+.crit-list {
+  list-style: none;
+  display: grid;
+  gap: 18px;
+}
+.crit {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+.crit h3 { font-size: 1.18rem; color: var(--green-900); margin-bottom: 8px; }
+.crit p { font-size: 1.02rem; }
+.crit .cite { margin-top: 10px; }
+.crit-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+.crit-btns button {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.98rem;
+  cursor: pointer;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink-soft);
+  padding: 9px 18px;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.crit-btns button:hover { border-color: var(--green-500); color: var(--green-800); }
+.crit-btns button.on {
+  background: var(--green-800);
+  border-color: var(--green-800);
+  color: #ffffff;
+}
+
+/* ============================================================
+   5. DEANWOOD
    ============================================================ */
 
 .dw-stats {
@@ -413,7 +476,136 @@ a:focus-visible, button:focus-visible {
 .studio-note { max-width: 820px; font-size: 1.08rem; color: var(--ink-soft); }
 
 /* ============================================================
-   6. CONTACT + FOOTER
+   7. RESULTS
+   ============================================================ */
+
+.result-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: clamp(24px, 4vw, 40px);
+  max-width: 860px;
+}
+
+.print-head {
+  display: none;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #999999;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.result-top {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 4vw, 40px);
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+
+.ring { width: min(190px, 50vw); flex-shrink: 0; }
+.ring-track { fill: none; stroke: var(--green-100); stroke-width: 12; }
+.ring-arc {
+  fill: none;
+  stroke: var(--green-600);
+  stroke-width: 12;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 60px 60px;
+  transition: stroke-dashoffset 0.6s ease;
+}
+.ring-num {
+  font-size: 34px;
+  font-weight: 800;
+  fill: var(--green-900);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.ring-den { font-size: 13px; fill: var(--ink-soft); text-anchor: middle; }
+
+.result-verdict { flex: 1 1 280px; }
+.band-label {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  color: var(--green-800);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+.band-blurb { font-size: 1.05rem; color: var(--ink-soft); }
+.answered-note { margin-top: 10px; font-size: 0.98rem; color: var(--green-600); font-weight: 600; }
+
+.result-h { font-size: 1.15rem; color: var(--green-900); margin: 22px 0 12px; }
+
+.result-breakdown {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 8px 22px;
+}
+.result-breakdown li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  padding: 4px 0;
+}
+.bd-score {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border: 2px solid var(--line);
+  color: var(--ink-soft);
+}
+.bd-score.s2 { background: var(--green-800); border-color: var(--green-800); color: #ffffff; }
+.bd-score.s1 { background: var(--green-100); border-color: var(--green-500); color: var(--green-800); }
+.bd-score.s0 { border-color: #c9a13b; color: #8a6d1f; }
+
+.next-moves {
+  padding-left: 22px;
+  display: grid;
+  gap: 10px;
+  font-size: 1.02rem;
+}
+.mv-src { color: var(--ink-soft); }
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 26px;
+}
+.btn-print {
+  background: var(--green-800);
+  color: #ffffff;
+  font-size: 1.05rem;
+  padding: 14px 32px;
+}
+.btn-print:hover { background: var(--green-900); }
+.btn-reset {
+  background: var(--card);
+  color: var(--green-800);
+  border: 2px solid var(--line);
+  font-size: 1.05rem;
+  padding: 12px 28px;
+}
+.btn-reset:hover { border-color: var(--green-500); }
+
+.result-fine {
+  margin-top: 22px;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   8. CONTACT + FOOTER
    ============================================================ */
 
 .section-contact { text-align: center; }
@@ -449,18 +641,42 @@ a:focus-visible, button:focus-visible {
   .vault-door, .v-wheel, .v-lugs rect, .vault-glow, .vault-overlay { transition: none; }
 }
 
+/* Print = the results card only, styled as foreground ink on white
+   (printers default to "background graphics: off", so nothing may
+   depend on a CSS background to be legible). */
 @media print {
   body.locked { overflow: visible; }
-  .vault-overlay, .topnav { display: none !important; }
-  .journey[hidden] { display: block; }
   body { background: #ffffff; color: #000000; }
+  .vault-overlay, .topnav, .footer { display: none !important; }
+  .journey[hidden] { display: block; }
+  .journey > .section:not(#results) { display: none !important; }
+
+  #results { padding: 0; max-width: 100%; }
+  #results .kicker { color: #000000; }
+  #results h2 { color: #000000; }
+  #results .lede { display: none; }
   .reveal { opacity: 1; transform: none; }
-  .section-alt { background: #ffffff; }
-  .reason-card, .method, .dw-stat { box-shadow: none; border: 1px solid #999999; break-inside: avoid; }
-  .third { color: #000000; background: none; border: 1.5px solid var(--green-800); }
-  .third-why { color: #333333; }
-  .video-frame { display: none; }
-  .video-wrap figcaption::after { content: " (video: https://youtu.be/b2GAGXhVmvI)"; }
-  .cite a { text-decoration: none; color: #000000; }
-  .cite a::after { content: " (" attr(href) ")"; font-size: 0.85em; word-break: break-all; }
+
+  .result-card {
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    max-width: 100%;
+  }
+  .print-head { display: flex; color: #000000; }
+
+  .ring-track { stroke: #dddddd; }
+  .ring-arc { stroke: var(--green-600); }
+  .ring-num { fill: #000000; }
+  .ring-den { fill: #333333; }
+  .band-label { color: #000000; }
+  .band-blurb, .answered-note, .mv-src, .result-fine { color: #333333; }
+  .result-h { color: #000000; }
+
+  .bd-score { border: 2px solid #555555; background: none !important; color: #000000 !important; }
+  .bd-score.s2 { border-color: var(--green-600); }
+  .bd-score.s0 { border-style: dashed; }
+
+  .result-actions { display: none !important; }
+  .result-breakdown, .next-moves { break-inside: avoid; }
 }

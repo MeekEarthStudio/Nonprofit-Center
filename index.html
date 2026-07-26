@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>The Transparency Vault — Meek Earth Studio</title>
-<meta name="description" content="Why nonprofit transparency raises more money, how to practice it, and the Deanwood benefit concert that proved it — from Meek Earth Studio PBC." />
+<meta name="description" content="Why nonprofit transparency raises more money, how to practice it, a scorecard to audit your own organization, and the Deanwood benefit concert that proved it — from Meek Earth Studio PBC." />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="locked">
@@ -45,9 +45,9 @@
       <div class="vault-glow" aria-hidden="true"></div>
     </div>
     <h1 class="vault-title">The Transparency Vault</h1>
-    <p class="vault-sub">Donors give more when the books are open.<br/>See the evidence, the methods, and the concert that proved it.</p>
+    <p class="vault-sub">Donors give more when the books are open.<br/>See the evidence, score your own transparency, and meet the concert that proved it.</p>
     <button class="btn btn-vault" id="openVaultBtn" type="button">Open</button>
-    <p class="vault-note">No email required. Nothing is collected.</p>
+    <p class="vault-note">No email required. Nothing is collected — your scores stay in your browser.</p>
   </div>
 </div>
 
@@ -59,9 +59,11 @@
     <div class="topnav-links">
       <a href="#why">Why</a>
       <a href="#how">How</a>
+      <a href="#scorecard">Scorecard</a>
       <a href="#deanwood">Deanwood</a>
       <a href="#studio">The Studio</a>
       <a href="#contact">Contact</a>
+      <a href="#results">Results</a>
     </div>
   </nav>
 
@@ -153,10 +155,26 @@
     </ol>
   </section>
 
-  <!-- ============ 4. DEANWOOD ============ -->
-  <section class="section" id="deanwood">
+  <!-- ============ 4. SCORECARD ============ -->
+  <section class="section" id="scorecard">
     <header class="section-head">
-      <p class="kicker">Step 3 · The proof</p>
+      <p class="kicker">Step 3 · Your audit</p>
+      <h2>The transparency scorecard</h2>
+      <p class="lede">Ten practices, straight from the cited research above. Score your organization honestly on each — <strong>0</strong> not yet, <strong>1</strong> in progress, <strong>2</strong> yes and it's public — and your printable results build at the end of the page.</p>
+    </header>
+
+    <div class="score-rail" id="scoreRail" aria-live="polite">
+      <span>Score so far: <strong id="railScore">0</strong> / 20</span>
+      <span id="railAnswered">0 of 10 answered</span>
+    </div>
+
+    <ol class="crit-list" id="critList"></ol>
+  </section>
+
+  <!-- ============ 5. DEANWOOD ============ -->
+  <section class="section section-alt" id="deanwood">
+    <header class="section-head">
+      <p class="kicker">Step 4 · The proof</p>
       <h2>The Deanwood concert</h2>
       <p class="lede">On <strong>January 17, 2026</strong>, Meek Earth Studio produced a benefit concert in Deanwood, Washington, D.C., featuring artist <strong>Grace J. Reid</strong>, in support of <strong>STEP DC</strong>. The experiment: disclose the full revenue split to every buyer at checkout — artist's share, nonprofit's share, studio's share, fees — and see what radical transparency does to giving behavior.</p>
     </header>
@@ -184,10 +202,10 @@
     </figure>
   </section>
 
-  <!-- ============ 5. MEEK EARTH STUDIO ============ -->
-  <section class="section section-alt" id="studio">
+  <!-- ============ 6. MEEK EARTH STUDIO ============ -->
+  <section class="section" id="studio">
     <header class="section-head">
-      <p class="kicker">Step 4 · The model</p>
+      <p class="kicker">Step 5 · The model</p>
       <h2>Meek Earth Studio PBC</h2>
     </header>
 
@@ -205,15 +223,58 @@
     <p class="studio-note reveal">The split is disclosed to every buyer at checkout. That's the whole point: the transparency the research says donors reward is the same transparency our model runs on. Nonprofits get a fundraising event, a fair-pay story, and open books — without building any of it themselves.</p>
   </section>
 
-  <!-- ============ 6. CONTACT ============ -->
-  <section class="section section-contact" id="contact">
+  <!-- ============ 7. CONTACT ============ -->
+  <section class="section section-alt section-contact" id="contact">
     <header class="section-head">
-      <p class="kicker">Step 5 · The invitation</p>
+      <p class="kicker">Step 6 · The invitation</p>
       <h2>Partner with Meek Earth Studio</h2>
       <p class="lede">Want a benefit concert with the books open — a third to the artists, a third to your mission, a third to the studio? Let's talk.</p>
     </header>
     <a class="btn btn-contact" href="mailto:cbreid3@meekearthstudio.net?subject=Partnering%20with%20Meek%20Earth%20Studio">cbreid3@meekearthstudio.net</a>
     <p class="contact-sub">Carlton B. Reid III · Meek Earth Studio PBC</p>
+  </section>
+
+  <!-- ============ 8. RESULTS ============ -->
+  <section class="section" id="results">
+    <header class="section-head">
+      <p class="kicker">Step 7 · Your results</p>
+      <h2>Your transparency results</h2>
+      <p class="lede">A printable summary of your scorecard. Use the button below to print it or save it as a PDF — only this card prints.</p>
+    </header>
+
+    <div class="result-card reveal" id="resultCard">
+      <div class="print-head">
+        <span class="print-brand">The Transparency Vault · Meek Earth Studio PBC</span>
+        <span id="printDate"></span>
+      </div>
+
+      <div class="result-top">
+        <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="Total score">
+          <circle class="ring-track" cx="60" cy="60" r="52"/>
+          <circle class="ring-arc" id="ringArc" cx="60" cy="60" r="52"/>
+          <text class="ring-num" id="ringNum" x="60" y="58">0</text>
+          <text class="ring-den" x="60" y="78">/ 20</text>
+        </svg>
+        <div class="result-verdict">
+          <p class="band-label" id="bandLabel">Highest Upside</p>
+          <p class="band-blurb" id="bandBlurb"></p>
+          <p class="answered-note" id="answeredNote"></p>
+        </div>
+      </div>
+
+      <h3 class="result-h">Item by item</h3>
+      <ul class="result-breakdown" id="resultBreakdown"></ul>
+
+      <h3 class="result-h">Your next moves</h3>
+      <ol class="next-moves" id="nextMoves"></ol>
+
+      <div class="result-actions">
+        <button class="btn btn-print" id="printBtn" type="button">Print / Save as PDF</button>
+        <button class="btn btn-reset" id="resetBtn" type="button">Reset scorecard</button>
+      </div>
+
+      <p class="result-fine">Scores stay in your browser — nothing is uploaded. Scoring bands: 16–20 Transparency Leader · 10–15 Building Trust · 0–9 Highest Upside. Practices and citations: see meekearthstudio.net's Transparency Vault.</p>
+    </div>
   </section>
 
   <footer class="footer">

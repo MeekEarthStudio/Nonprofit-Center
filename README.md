@@ -26,23 +26,34 @@ collection**: there is no email gate, no analytics beacon, no backend. Open
    named citation rendered at full body-copy size (GAAP/ASC 958 reporting,
    Form 990 discipline, Candid Seals, dashboards/impact reports,
    conflict-of-interest enforcement, point-of-donation fee disclosure).
-4. **The Deanwood concert** — the Jan 17, 2026 benefit in Deanwood, DC for
+4. **The transparency scorecard** — ten practices drawn from the cited
+   research (GAAP statements, independent audit, Form 990 discipline, Candid
+   Seal, impact dashboards, state registrations, COI enforcement,
+   point-of-donation fee disclosure, fund-delivery speed, event revenue-split
+   disclosure), each scored 0/1/2 with a sticky running total. Every
+   criterion carries its citation. Scores stay in the browser.
+5. **The Deanwood concert** — the Jan 17, 2026 benefit in Deanwood, DC for
    STEP DC (artist: Grace J. Reid): 54 tickets, 70.37% premium conversion
    against a 20–30% benchmark, $3,615 gross, $1,890 delivered to the
    nonprofit — with the honesty note that it's a single 54-buyer prototype —
    plus the embedded concert video.
-5. **Meek Earth Studio PBC** — the studio logo and the thirds model: ⅓ of
+6. **Meek Earth Studio PBC** — the studio logo and the thirds model: ⅓ of
    revenue to the artists, ⅓ to the nonprofit, ⅓ to the studio, disclosed to
    every buyer at checkout.
-6. **Contact** — cbreid3@meekearthstudio.net to explore a partnership.
+7. **Contact** — cbreid3@meekearthstudio.net to explore a partnership.
+8. **Your results** — a live result card: score ring out of 20, rating band
+   (16–20 Transparency Leader · 10–15 Building Trust · 0–9 Highest Upside),
+   per-item breakdown, and the top three cited next moves. A **Print / Save
+   as PDF** button prints only this card, styled as foreground ink on white
+   so it survives printers' "background graphics: off" default.
 
 ## Files
 
 | Path | Purpose |
 |---|---|
-| `index.html` | All markup for the vault and the five journey sections |
-| `styles.css` | The green/light design system, vault animation, print styles |
-| `app.js` | Vault choreography, scroll reveals, animated counters, nav highlighting |
+| `index.html` | All markup for the vault and the seven journey sections |
+| `styles.css` | The green/light design system, vault animation, scorecard/results, print styles |
+| `app.js` | Vault choreography, scorecard data + scoring, results/print, scroll reveals, counters |
 | `assets/meek-earth-logo.jpeg` | The Meek Earth Studio logo (served from this repo at a pinned commit) |
 | `vercel.json` | Security headers (CSP allows the YouTube-nocookie embed) |
 
