@@ -43,7 +43,7 @@ collection**: there is no email gate, no analytics beacon, no backend. Open
 | `index.html` | All markup for the vault and the five journey sections |
 | `styles.css` | The green/light design system, vault animation, print styles |
 | `app.js` | Vault choreography, scroll reveals, animated counters, nav highlighting |
-| `assets/meek-earth-logo.jpeg` | The Meek Earth Studio logo |
+| `assets/meek-earth-logo.jpeg` | The Meek Earth Studio logo (served from this repo at a pinned commit) |
 | `vercel.json` | Security headers (CSP allows the YouTube-nocookie embed) |
 
 ## Design notes
